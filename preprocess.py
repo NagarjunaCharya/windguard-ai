@@ -39,9 +39,9 @@ class Config:
 
     # Sequence parameters
     SEQUENCE_LENGTH = 72
-    FEATURE_COLS = ['wind_speed', 'vibration', 'gearbox_temperature', 'yaw_position']
+    FEATURE_COLS = ['wind_speed', 'vibration', 'gearbox_temperature', 'yaw_position']  # Correct columns from data
     
-    # Labeling thresholds (on normalized data)
+    # Labeling thresholds (CRITICAL: as per spec - vibration >0.6 OR gearbox_temp >0.85 on normalized data)
     VIBRATION_THRESHOLD = 0.6
     TEMP_THRESHOLD = 0.85
     

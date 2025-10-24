@@ -1,0 +1,32 @@
+{
+  "model_type": "BiLSTM",
+  "model_architecture": {
+    "input_size": 4,
+    "hidden_size": 64,
+    "num_layers": 2,
+    "bidirectional": true
+  },
+  "sequence_length": 72,
+  "feature_names": [
+    "wind_speed",
+    "vibration",
+    "gearbox_temperature",
+    "yaw_position"
+  ],
+  "performance_metrics": {
+    "accuracy": 0.8888888888888888,
+    "auc": 0.9538398692810457,
+    "precision": 0.65625,
+    "recall": 0.875,
+    "f1": 0.75,
+    "targets_met": false
+  },
+  "targets": {
+    "accuracy": 0.85,
+    "precision": 0.8,
+    "auc": 0.85
+  },
+  "training_date": "2025-10-25T02:21:36.058328",
+  "device": "cpu",
+  "usage": "Load model with BiLSTMPredictor, scaler with pickle/numpy, predict 72-hour sequences"
+}
