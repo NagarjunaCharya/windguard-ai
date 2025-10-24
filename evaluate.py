@@ -132,11 +132,15 @@ def main():
 
     # 3. Evaluate Model
     predictions, true_labels, probabilities = evaluate_model(model, test_loader, config.DEVICE)
+    
+    # Use optimized threshold for better precision
+    optimal_threshold = 0.75  # From optimize_precision.py
+    predictions_optimized = (probabilities >= optimal_threshold).astype(int)
 
     # 4. Calculate and Print Metrics
-    accuracy = accuracy_score(true_labels, predictions)
+    accuracy = accuracy_score(true_labels, predictions_optimized)
     auc = roc_auc_score(true_labels, probabilities)
-    precision, recall, f1, _ = precision_recall_fscore_support(true_labels, predictions, average='binary')
+    precision, recall, f1, _ = precision_recall_fscore_support(true_labels, predictions_optimized, average='binary')
 
     print("\n" + "="*80)
     print("📊 Evaluation Results")
@@ -150,7 +154,7 @@ def main():
 
     # 5. Plot and Save Confusion Matrix
     print(f"🎨 Plotting confusion matrix to {config.CONFUSION_MATRIX_PATH}...")
-    cm = confusion_matrix(true_labels, predictions)
+    cm = confusion_matrix(true_labels, predictions_optimized)
     plt.figure(figsize=(8, 6))
     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
                 xticklabels=['No Failure', 'Failure'],

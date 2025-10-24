@@ -1,0 +1,11 @@
+{
+  "optimal_threshold": 0.7499999999999999,
+  "performance": {
+    "accuracy": 0.9126984126984127,
+    "precision": 0.8421052631578947,
+    "recall": 0.6666666666666666,
+    "f1_score": 0.7441860465116279
+  },
+  "meets_precision_target": true,
+  "usage": "Use this threshold for predict_failure() function"
+}

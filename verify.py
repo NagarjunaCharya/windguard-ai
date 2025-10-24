@@ -104,10 +104,11 @@ def load_artifacts():
 # ============================================================================
 # 2. Full Model Evaluation
 # ============================================================================
-def evaluate_full(model, X_test, y_test):
+def evaluate_full(model, X_test, y_test, optimal_threshold=0.75):
     """Comprehensive evaluation against targets."""
     print("\n" + "="*80)
     print("FULL MODEL EVALUATION")
+    print(f"Using optimal threshold: {optimal_threshold}")
     print("="*80)
     
     model.eval()
@@ -118,7 +119,7 @@ def evaluate_full(model, X_test, y_test):
         # Get predictions (logits from BCEWithLogitsLoss training)
         logits = model(X_test_gpu)
         probs = torch.sigmoid(logits)  # Apply sigmoid for inference
-        preds = (probs >= 0.5).float()
+        preds = (probs >= optimal_threshold).float()  # Use optimal threshold
         
         # Convert to numpy for metrics
         y_true = y_test_gpu.cpu().numpy()
@@ -170,7 +171,7 @@ def evaluate_full(model, X_test, y_test):
 # ============================================================================
 # 3. Prediction Function for New Data
 # ============================================================================
-def predict_failure(model, scaler, new_data_df, return_explanation=False):
+def predict_failure(model, scaler, new_data_df, threshold=0.75, return_explanation=False):
     """
     Predict failure for new 72-hour sequence data.
     
@@ -179,6 +180,7 @@ def predict_failure(model, scaler, new_data_df, return_explanation=False):
         scaler: Fitted MinMaxScaler
         new_data_df: DataFrame with columns ['wind_speed', 'vibration', 'gearbox_temperature', 'yaw_position']
                      Must have exactly 72 rows (or will use last 72)
+        threshold: Decision threshold (default 0.75 optimized for precision>0.80)
         return_explanation: If True, return SHAP values
         
     Returns:
@@ -202,7 +204,7 @@ def predict_failure(model, scaler, new_data_df, return_explanation=False):
     with torch.no_grad():
         logit = model(seq_tensor)
         prob = torch.sigmoid(logit).item()
-        pred = int(prob >= 0.5)
+        pred = int(prob >= threshold)  # Use optimized threshold
     
     # Generate action
     if pred == 1:
