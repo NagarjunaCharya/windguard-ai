@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="WindGuard AI - Predictive Maintenance for Wind Turbines">
+    <title>WindGuard AI - Dashboard</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-wind"></i>
+                <h1>WindGuard AI</h1>
+            </div>
+            <nav class="nav">
+                <a href="#dashboard" class="nav-link active">Dashboard</a>
+                <a href="#turbines" class="nav-link">Turbines</a>
+                <a href="#predictions" class="nav-link">Predictions</a>
+                <a href="#analytics" class="nav-link">Analytics</a>
+            </nav>
+            <div class="header-actions">
+                <button class="btn btn-icon" id="refreshBtn" title="Refresh Data">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="btn btn-icon" id="notificationBtn" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            
+            <!-- Overview Cards -->
+            <section class="overview-section">
+                <h2 class="section-title">System Overview</h2>
+                <div class="cards-grid">
+                    
+                    <div class="card card-primary">
+                        <div class="card-icon">
+                            <i class="fas fa-wind"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Active Turbines</h3>
+                            <p class="card-value" id="activeTurbines">4</p>
+                            <span class="card-status status-success">
+                                <i class="fas fa-arrow-up"></i> All Operational
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card card-warning">
+                        <div class="card-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Anomalies Detected</h3>
+                            <p class="card-value" id="anomalyCount">12</p>
+                            <span class="card-status status-warning">
+                                <i class="fas fa-chart-line"></i> +3 Last Hour
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card card-success">
+                        <div class="card-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Total Power Output</h3>
+                            <p class="card-value" id="totalPower">7.2 <span class="unit">MW</span></p>
+                            <span class="card-status status-success">
+                                <i class="fas fa-arrow-up"></i> 92% Efficiency
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card card-info">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">System Health</h3>
+                            <p class="card-value" id="systemHealth">87%</p>
+                            <span class="card-status status-info">
+                                <i class="fas fa-check-circle"></i> Good
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Turbine Status Grid -->
+            <section class="turbines-section">
+                <div class="section-header">
+                    <h2 class="section-title">Turbine Fleet Status</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                        <button class="btn btn-primary" id="predictAllBtn">
+                            <i class="fas fa-brain"></i> Predict All
+                        </button>
+                    </div>
+                </div>
+
+                <div class="turbines-grid" id="turbinesGrid">
+                    <!-- Turbine cards will be dynamically loaded -->
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-section">
+                <div class="charts-grid">
+                    
+                    <!-- Time Series Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Wind Speed & Power Output (24h)</h3>
+                            <select class="chart-select" id="turbineSelect">
+                                <option value="all">All Turbines</option>
+                                <option value="WT001">WT001</option>
+                                <option value="WT002">WT002</option>
+                                <option value="WT003">WT003</option>
+                                <option value="WT004">WT004</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="timeSeriesChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Anomaly Heatmap -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Anomaly Heatmap</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="anomalyChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Predictions Table -->
+            <section class="predictions-section">
+                <h2 class="section-title">Recent Predictions</h2>
+                <div class="table-container">
+                    <table class="data-table" id="predictionsTable">
+                        <thead>
+                            <tr>
+                                <th>Turbine ID</th>
+                                <th>Prediction Time</th>
+                                <th>Failure Probability</th>
+                                <th>Risk Level</th>
+                                <th>Expected Failure</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="predictionsBody">
+                            <!-- Rows will be dynamically loaded -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 WindGuard AI. Phase 1 - MVP. Built with ❤️ for Envision Challenge.</p>
+            <div class="footer-links">
+                <a href="#api">API Docs</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Loading data...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script type="module" src="scripts/main.js"></script>
+</body>
+</html>

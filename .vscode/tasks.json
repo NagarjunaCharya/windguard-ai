@@ -1,0 +1,174 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "🔧 Setup: Initialize Git Repository",
+            "type": "shell",
+            "command": ".\\scripts\\git_init.ps1",
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "label": "🐍 Setup: Create Python Environment",
+            "type": "shell",
+            "command": ".\\scripts\\setup_env.ps1",
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "label": "📦 Setup: Clone External Repositories",
+            "type": "shell",
+            "command": ".\\scripts\\clone_repos.ps1",
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "📊 Data: Run Data Ingestion",
+            "type": "shell",
+            "command": "${workspaceFolder}\\windguard-env\\Scripts\\python.exe",
+            "args": [
+                "scripts\\data_ingestion.py"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "🚀 Backend: Start FastAPI Server",
+            "type": "shell",
+            "command": ".\\scripts\\start_backend.ps1",
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^.*$",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*Starting.*$",
+                    "endsPattern": "^.*Application startup complete.*$"
+                }
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false
+            }
+        },
+        {
+            "label": "🌐 Frontend: Open Dashboard",
+            "type": "shell",
+            "command": "Start-Process",
+            "args": [
+                "http://127.0.0.1:5500/frontend/index.html"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "never"
+            }
+        },
+        {
+            "label": "📝 TypeScript: Compile",
+            "type": "shell",
+            "command": "tsc",
+            "args": [
+                "-p",
+                "${workspaceFolder}\\frontend"
+            ],
+            "problemMatcher": ["$tsc"],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "🧹 Clean: Remove Generated Files",
+            "type": "shell",
+            "command": "Remove-Item",
+            "args": [
+                "-Path",
+                "data\\processed\\*",
+                "-Recurse",
+                "-Force",
+                "-ErrorAction",
+                "SilentlyContinue"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "📦 Install: Python Dependencies",
+            "type": "shell",
+            "command": "${workspaceFolder}\\windguard-env\\Scripts\\python.exe",
+            "args": [
+                "-m",
+                "pip",
+                "install",
+                "-r",
+                "requirements.txt"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "✅ Verify: Check Installation",
+            "type": "shell",
+            "command": "${workspaceFolder}\\windguard-env\\Scripts\\python.exe",
+            "args": [
+                "-c",
+                "import torch, pandas, fastapi, sklearn; print('✅ All packages installed correctly')"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "🔄 Full Setup: Complete Phase 1",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "🔧 Setup: Initialize Git Repository",
+                "🐍 Setup: Create Python Environment",
+                "📦 Setup: Clone External Repositories",
+                "📊 Data: Run Data Ingestion"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "🚀 Start: Backend + Frontend",
+            "dependsOrder": "parallel",
+            "dependsOn": [
+                "🚀 Backend: Start FastAPI Server"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}
