@@ -111,7 +111,7 @@ def main():
     
     print(model)
     
-    criterion = nn.BCELoss(pos_weight=pos_weight.to(config.DEVICE))
+    criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight.to(config.DEVICE))
     optimizer = torch.optim.Adam(model.parameters(), lr=config.LEARNING_RATE)
 
     # 4. Training Loop

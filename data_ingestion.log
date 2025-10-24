@@ -1,0 +1,105 @@
+2025-10-25 01:55:46,360 - INFO - ================================================================================
+2025-10-25 01:55:46,373 - INFO - ================================================================================
+2025-10-25 01:55:46,374 - INFO - 
+2025-10-25 01:55:46,383 - INFO -    Skipping EnOS data fetch...
+2025-10-25 01:55:46,401 - ERROR - Traceback (most recent call last):
+  File "C:\Users\Nagarjuna\OneDrive\Desktop\CYPHER_3.02\scripts\data_ingestion.py", line 661, in main
+    df_mock = generate_mock_data(config.NUM_SAMPLES)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nagarjuna\OneDrive\Desktop\CYPHER_3.02\scripts\data_ingestion.py", line 188, in generate_mock_data
+    from faker import Faker
+ModuleNotFoundError: No module named 'faker'
+
+2025-10-25 01:59:23,638 - INFO - ================================================================================
+2025-10-25 01:59:23,639 - INFO - WINDGUARD AI - DATA INGESTION PIPELINE
+2025-10-25 01:59:23,640 - INFO - ================================================================================
+2025-10-25 01:59:23,640 - INFO - 
+2025-10-25 01:59:23,641 - INFO - Attempting to fetch EnOS platform data...
+2025-10-25 01:59:23,641 - WARNING - EnOS credentials not configured (check .env file)
+2025-10-25 01:59:23,641 - INFO -    Skipping EnOS data fetch...
+2025-10-25 01:59:23,641 - INFO - Generating 1000 mock data samples...
+2025-10-25 01:59:23,643 - ERROR - Faker not installed: pip install faker
+2025-10-25 01:59:23,650 - ERROR - Traceback (most recent call last):
+  File "C:\Users\Nagarjuna\OneDrive\Desktop\CYPHER_3.02\scripts\data_ingestion.py", line 661, in main
+    df_mock = generate_mock_data(config.NUM_SAMPLES)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nagarjuna\OneDrive\Desktop\CYPHER_3.02\scripts\data_ingestion.py", line 188, in generate_mock_data
+    from faker import Faker
+ModuleNotFoundError: No module named 'faker'
+
+2025-10-25 02:01:39,860 - INFO - ================================================================================
+2025-10-25 02:01:39,861 - INFO - WINDGUARD AI - DATA INGESTION PIPELINE
+2025-10-25 02:01:39,861 - INFO - ================================================================================
+2025-10-25 02:01:39,861 - INFO - 
+2025-10-25 02:01:39,862 - INFO - Attempting to fetch EnOS platform data...
+2025-10-25 02:01:39,862 - WARNING - EnOS credentials not configured (check .env file)
+2025-10-25 02:01:39,862 - INFO -    Skipping EnOS data fetch...
+2025-10-25 02:01:39,862 - INFO - Generating 1000 mock data samples...
+2025-10-25 02:01:41,582 - INFO - Generated 1000 mock samples
+2025-10-25 02:01:41,582 - INFO -    Columns: ['timestamp', 'turbine_id', 'wind_speed', 'vibration', 'gearbox_temperature', 'yaw_position', 'rotor_speed', 'power_output']
+2025-10-25 02:01:41,584 - INFO -    Date range: 2025-09-15 02:01:41.562105 to 2025-10-26 17:01:41.562105
+2025-10-25 02:01:41,584 - INFO - Loading data from PREDICTIVE-MAINTENANCE repository...
+2025-10-25 02:01:41,584 - WARNING - Repository not found at C:\Users\Nagarjuna\OneDrive\Desktop\CYPHER_3.02\external_repos\PREDICTIVE-MAINTENANCE
+2025-10-25 02:01:41,585 - INFO -    Run: .\scripts\clone_repos.ps1
+2025-10-25 02:01:41,585 - INFO - Loading OpenFAST simulation data...
+2025-10-25 02:01:41,586 - WARNING - OpenFAST repository not found at C:\Users\Nagarjuna\OneDrive\Desktop\CYPHER_3.02\external_repos\OpenFAST
+2025-10-25 02:01:41,586 - INFO - Checking for Kaggle wind turbine dataset...
+2025-10-25 02:01:41,587 - INFO -    Install Kaggle CLI: pip install kaggle
+2025-10-25 02:01:41,587 - INFO -    Setup: https://github.com/Kaggle/kaggle-api
+2025-10-25 02:01:41,588 - INFO - Combining and preprocessing data...
+2025-10-25 02:01:41,588 - INFO -    Combining 1 data sources: Mock
+2025-10-25 02:01:41,590 - INFO - Combined dataset: 1000 rows
+2025-10-25 02:01:41,591 - INFO - Preprocessing data...
+2025-10-25 02:01:41,595 - INFO -    Generating anomaly labels...
+2025-10-25 02:01:41,597 - INFO -    Anomalies: 537 (53.70%)
+2025-10-25 02:01:41,612 - INFO -    Normalizing features...
+2025-10-25 02:01:41,623 - INFO -    Saved scaler to C:\Users\Nagarjuna\OneDrive\Desktop\CYPHER_3.02\data\processed\scaler.pkl
+2025-10-25 02:01:41,624 - INFO - Preprocessing complete: 1000 rows, 13 columns
+2025-10-25 02:01:41,624 - INFO - Splitting data into train/test sets...
+2025-10-25 02:01:41,626 - INFO -    Train: 700 rows (70.0%)
+2025-10-25 02:01:41,626 - INFO -    Test:  300 rows (30.0%)
+2025-10-25 02:01:41,666 - INFO - Saved train data to C:\Users\Nagarjuna\OneDrive\Desktop\CYPHER_3.02\data\processed\train_data.csv
+2025-10-25 02:01:41,666 - INFO - Saved test data to C:\Users\Nagarjuna\OneDrive\Desktop\CYPHER_3.02\data\processed\test_data.csv
+2025-10-25 02:01:41,666 - INFO - Saved combined data to C:\Users\Nagarjuna\OneDrive\Desktop\CYPHER_3.02\data\processed\combined_data.csv
+2025-10-25 02:01:41,666 - INFO - Generating visualizations...
+2025-10-25 02:01:43,993 - INFO - Saved visualization to C:\Users\Nagarjuna\OneDrive\Desktop\CYPHER_3.02\data\processed\data_overview.png
+2025-10-25 02:01:44,056 - INFO - 
+================================================================================
+2025-10-25 02:01:44,056 - INFO - DATA INGESTION SUMMARY
+2025-10-25 02:01:44,057 - INFO - ================================================================================
+2025-10-25 02:01:44,057 - INFO - 
+Dataset Shape: 1000 rows × 13 columns
+2025-10-25 02:01:44,057 - INFO - 
+Columns:
+2025-10-25 02:01:44,058 - INFO -    - timestamp                 datetime64[ns] (nulls: 0)
+2025-10-25 02:01:44,059 - INFO -    - turbine_id                object     (nulls: 0)
+2025-10-25 02:01:44,060 - INFO -    - wind_speed                float64    (nulls: 0)
+2025-10-25 02:01:44,060 - INFO -    - vibration                 float64    (nulls: 0)
+2025-10-25 02:01:44,061 - INFO -    - gearbox_temperature       float64    (nulls: 0)
+2025-10-25 02:01:44,062 - INFO -    - yaw_position              float64    (nulls: 0)
+2025-10-25 02:01:44,063 - INFO -    - rotor_speed               float64    (nulls: 0)
+2025-10-25 02:01:44,064 - INFO -    - power_output              float64    (nulls: 0)
+2025-10-25 02:01:44,065 - INFO -    - data_source               object     (nulls: 0)
+2025-10-25 02:01:44,066 - INFO -    - is_anomaly                int64      (nulls: 0)
+2025-10-25 02:01:44,067 - INFO -    - hour                      int32      (nulls: 0)
+2025-10-25 02:01:44,068 - INFO -    - day_of_week               int32      (nulls: 0)
+2025-10-25 02:01:44,069 - INFO -    - month                     int32      (nulls: 0)
+2025-10-25 02:01:44,069 - INFO - 
+Numeric Features Summary:
+2025-10-25 02:01:44,118 - INFO - 
+Anomalies: 537 / 1000 (53.70%)
+2025-10-25 02:01:44,119 - INFO - 
+Time Range:
+2025-10-25 02:01:44,119 - INFO -    Start: 2025-09-15 02:01:41.562105
+2025-10-25 02:01:44,120 - INFO -    End:   2025-10-26 17:01:41.562105
+2025-10-25 02:01:44,120 - INFO - 
+================================================================================
+2025-10-25 02:01:44,120 - INFO - 
+2025-10-25 02:01:44,120 - INFO - ================================================================================
+2025-10-25 02:01:44,128 - INFO - ================================================================================
+2025-10-25 02:01:44,128 - INFO - 
+2025-10-25 02:01:44,132 - INFO -    1. Review data in: data/processed/
+2025-10-25 02:01:44,133 - INFO -    2. Check visualization: data/processed/data_overview.png
+2025-10-25 02:01:44,133 - INFO -    3. Start backend: .\scripts\start_backend.ps1
+2025-10-25 02:01:44,133 - INFO -    4. Train model: python scripts/train_bilstm.py
+2025-10-25 02:01:44,134 - INFO - 

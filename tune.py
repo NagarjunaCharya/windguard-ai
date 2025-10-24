@@ -39,8 +39,8 @@ class Config:
     RESULTS_DIR = 'results'
     
     # Optuna settings
-    N_TRIALS = 20
-    TIMEOUT = 600  # seconds (10 minutes)
+    N_TRIALS = 10
+    TIMEOUT = 300  # seconds (5 minutes)
     
     # Training settings for each trial
     TRIAL_EPOCHS = 10
@@ -103,7 +103,7 @@ def objective(trial: optuna.Trial) -> float:
     num_positives = y_train_full.sum()
     num_negatives = len(y_train_full) - num_positives
     pos_weight = num_negatives / num_positives if num_positives > 0 else torch.tensor(1.0)
-    criterion = nn.BCELoss(pos_weight=pos_weight.to(config.DEVICE))
+    criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight.to(config.DEVICE))
 
     # 4. Training and Validation Loop for the Trial
     for epoch in range(config.TRIAL_EPOCHS):

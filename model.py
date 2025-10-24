@@ -86,8 +86,9 @@ class BiLSTMPredictor(nn.Module):
         out = self.dropout(out)
         out = self.fc(out)
         
-        # Apply sigmoid activation for binary classification
-        out = self.sigmoid(out)
+        # Note: For BCEWithLogitsLoss, we don't apply sigmoid here
+        # If you're using BCELoss, uncomment the next line
+        # out = self.sigmoid(out)
         
         return out
 

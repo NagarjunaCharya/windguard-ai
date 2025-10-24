@@ -102,7 +102,7 @@ def fetch_enos_data() -> Optional[pd.DataFrame]:
     Returns:
         DataFrame with turbine sensor data or None if unavailable
     """
-    logger.info("🌐 Attempting to fetch EnOS platform data...")
+    logger.info("Attempting to fetch EnOS platform data...")
     
     try:
         # Try to import EnOS SDK
@@ -111,7 +111,7 @@ def fetch_enos_data() -> Optional[pd.DataFrame]:
         
         # Check if credentials are configured
         if config.ENOS_APP_KEY == 'YOUR_APP_KEY':
-            logger.warning("⚠️  EnOS credentials not configured (check .env file)")
+            logger.warning("EnOS credentials not configured (check .env file)")
             logger.info("   Skipping EnOS data fetch...")
             return None
         
@@ -163,10 +163,10 @@ def fetch_enos_data() -> Optional[pd.DataFrame]:
         return None
         
     except ImportError:
-        logger.warning("⚠️  EnOS SDK not installed (pip install enos-api-sdk-python)")
+        logger.warning("EnOS SDK not installed (pip install enos-api-sdk-python)")
         return None
     except Exception as e:
-        logger.error(f"❌ EnOS data fetch failed: {str(e)}")
+        logger.error(f"EnOS data fetch failed: {str(e)}")
         return None
 
 # ============================================================================
@@ -182,7 +182,7 @@ def generate_mock_data(num_samples: int = 1000) -> pd.DataFrame:
     Returns:
         DataFrame with synthetic turbine data
     """
-    logger.info(f"🎲 Generating {num_samples} mock data samples...")
+    logger.info(f"Generating {num_samples} mock data samples...")
     
     try:
         from faker import Faker
@@ -237,17 +237,17 @@ def generate_mock_data(num_samples: int = 1000) -> pd.DataFrame:
         # Sort by timestamp
         df_mock = df_mock.sort_values('timestamp').reset_index(drop=True)
         
-        logger.info(f"✅ Generated {len(df_mock)} mock samples")
+        logger.info(f"Generated {len(df_mock)} mock samples")
         logger.info(f"   Columns: {list(df_mock.columns)}")
         logger.info(f"   Date range: {df_mock['timestamp'].min()} to {df_mock['timestamp'].max()}")
         
         return df_mock
         
     except ImportError:
-        logger.error("❌ Faker not installed: pip install faker")
+        logger.error("Faker not installed: pip install faker")
         raise
     except Exception as e:
-        logger.error(f"❌ Mock data generation failed: {str(e)}")
+        logger.error(f"Mock data generation failed: {str(e)}")
         raise
 
 # ============================================================================
@@ -260,12 +260,12 @@ def load_repository_data() -> Optional[pd.DataFrame]:
     Returns:
         DataFrame from repository or None if not found
     """
-    logger.info("📂 Loading data from PREDICTIVE-MAINTENANCE repository...")
+    logger.info("Loading data from PREDICTIVE-MAINTENANCE repository...")
     
     repo_path = config.EXTERNAL_REPOS / "PREDICTIVE-MAINTENANCE"
     
     if not repo_path.exists():
-        logger.warning(f"⚠️  Repository not found at {repo_path}")
+        logger.warning(f"Repository not found at {repo_path}")
         logger.info("   Run: .\\scripts\\clone_repos.ps1")
         return None
     
@@ -273,7 +273,7 @@ def load_repository_data() -> Optional[pd.DataFrame]:
     csv_files = list(repo_path.rglob("*.csv"))
     
     if not csv_files:
-        logger.warning("⚠️  No CSV files found in repository")
+        logger.warning("No CSV files found in repository")
         return None
     
     logger.info(f"   Found {len(csv_files)} CSV files")
@@ -284,7 +284,7 @@ def load_repository_data() -> Optional[pd.DataFrame]:
             logger.info(f"   Loading: {csv_file.name}")
             df_repo = pd.read_csv(csv_file)
             
-            logger.info(f"✅ Loaded {len(df_repo)} rows from {csv_file.name}")
+            logger.info(f"Loaded {len(df_repo)} rows from {csv_file.name}")
             logger.info(f"   Columns: {list(df_repo.columns)}")
             
             return df_repo
@@ -305,19 +305,19 @@ def load_openfast_data() -> Optional[pd.DataFrame]:
     Returns:
         DataFrame with OpenFAST simulation data or None
     """
-    logger.info("🌊 Loading OpenFAST simulation data...")
+    logger.info("Loading OpenFAST simulation data...")
     
     openfast_path = config.EXTERNAL_REPOS / "OpenFAST"
     
     if not openfast_path.exists():
-        logger.warning(f"⚠️  OpenFAST repository not found at {openfast_path}")
+        logger.warning(f"OpenFAST repository not found at {openfast_path}")
         return None
     
     # Look for .fst input files
     fst_files = list(openfast_path.rglob("*.fst"))
     
     if not fst_files:
-        logger.warning("⚠️  No .fst files found")
+        logger.warning("No .fst files found")
         return None
     
     logger.info(f"   Found {len(fst_files)} .fst files")
@@ -325,7 +325,7 @@ def load_openfast_data() -> Optional[pd.DataFrame]:
     
     # OpenFAST output parsing would require running the simulation
     # For now, we'll create a placeholder
-    logger.info("   📝 OpenFAST simulation integration ready")
+    logger.info("   OpenFAST simulation integration ready")
     logger.info("   To run: ./openfast IEA-15-240-RWT.fst")
     logger.info("   To parse: pip install openfast")
     
@@ -341,7 +341,7 @@ def download_kaggle_dataset() -> Optional[pd.DataFrame]:
     Returns:
         DataFrame from Kaggle or None
     """
-    logger.info("📥 Checking for Kaggle wind turbine dataset...")
+    logger.info("Checking for Kaggle wind turbine dataset...")
     
     # Check if kaggle is installed
     try:
@@ -358,12 +358,12 @@ def download_kaggle_dataset() -> Optional[pd.DataFrame]:
         logger.info(f"   Loading existing Kaggle data from {kaggle_data_path}")
         try:
             df_kaggle = pd.read_csv(kaggle_data_path)
-            logger.info(f"✅ Loaded {len(df_kaggle)} rows from Kaggle dataset")
+            logger.info(f"Loaded {len(df_kaggle)} rows from Kaggle dataset")
             return df_kaggle
         except Exception as e:
             logger.warning(f"   Failed to load: {str(e)}")
     
-    logger.info("   📝 Kaggle download commands:")
+    logger.info("   Kaggle download commands:")
     logger.info("   1. kaggle datasets download -d berkerisen/wind-turbine-scada-dataset")
     logger.info("   2. unzip wind-turbine-scada-dataset.zip -d data/raw/")
     
@@ -392,7 +392,7 @@ def combine_and_preprocess_data(
     Returns:
         Preprocessed combined DataFrame
     """
-    logger.info("🔄 Combining and preprocessing data...")
+    logger.info("Combining and preprocessing data...")
     
     dataframes = []
     sources = []
@@ -430,12 +430,12 @@ def combine_and_preprocess_data(
     # Add data source column
     df_combined['data_source'] = 'mock'
     
-    logger.info(f"✅ Combined dataset: {len(df_combined)} rows")
+    logger.info(f"Combined dataset: {len(df_combined)} rows")
     
     # ========================================================================
     # Preprocessing Steps
     # ========================================================================
-    logger.info("🧹 Preprocessing data...")
+    logger.info("Preprocessing data...")
     
     # 1. Handle missing values
     initial_rows = len(df_combined)
@@ -479,7 +479,7 @@ def combine_and_preprocess_data(
         pickle.dump(scaler, f)
     logger.info(f"   Saved scaler to {scaler_path}")
     
-    logger.info(f"✅ Preprocessing complete: {len(df_combined)} rows, {len(df_combined.columns)} columns")
+    logger.info(f"Preprocessing complete: {len(df_combined)} rows, {len(df_combined.columns)} columns")
     
     return df_combined
 
@@ -496,7 +496,7 @@ def split_and_save_data(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     Returns:
         Tuple of (train_df, test_df)
     """
-    logger.info("✂️  Splitting data into train/test sets...")
+    logger.info("Splitting data into train/test sets...")
     
     # Use temporal split (no shuffling for time series)
     train_size = int(0.7 * len(df))
@@ -516,9 +516,9 @@ def split_and_save_data(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     df_test.to_csv(test_path, index=False)
     df.to_csv(combined_path, index=False)
     
-    logger.info(f"✅ Saved train data to {train_path}")
-    logger.info(f"✅ Saved test data to {test_path}")
-    logger.info(f"✅ Saved combined data to {combined_path}")
+    logger.info(f"Saved train data to {train_path}")
+    logger.info(f"Saved test data to {test_path}")
+    logger.info(f"Saved combined data to {combined_path}")
     
     return df_train, df_test
 
@@ -532,7 +532,7 @@ def visualize_data(df: pd.DataFrame):
     Args:
         df: Combined DataFrame
     """
-    logger.info("📊 Generating visualizations...")
+    logger.info("Generating visualizations...")
     
     try:
         import matplotlib.pyplot as plt
@@ -594,15 +594,15 @@ def visualize_data(df: pd.DataFrame):
         # Save plot
         plot_path = config.PROCESSED_DIR / "data_overview.png"
         plt.savefig(plot_path, dpi=150, bbox_inches='tight')
-        logger.info(f"✅ Saved visualization to {plot_path}")
+        logger.info(f"Saved visualization to {plot_path}")
         
         # plt.show()  # Uncomment to display
         plt.close()
         
     except ImportError:
-        logger.warning("⚠️  Matplotlib/Seaborn not installed - skipping visualization")
+        logger.warning("Matplotlib/Seaborn not installed - skipping visualization")
     except Exception as e:
-        logger.warning(f"⚠️  Visualization failed: {str(e)}")
+        logger.warning(f"Visualization failed: {str(e)}")
 
 # ============================================================================
 # 9. Data Summary
@@ -615,25 +615,25 @@ def print_summary(df: pd.DataFrame):
         df: Combined DataFrame
     """
     logger.info("\n" + "="*80)
-    logger.info("📋 DATA INGESTION SUMMARY")
+    logger.info("DATA INGESTION SUMMARY")
     logger.info("="*80)
     
-    logger.info(f"\n📊 Dataset Shape: {df.shape[0]} rows × {df.shape[1]} columns")
+    logger.info(f"\nDataset Shape: {df.shape[0]} rows × {df.shape[1]} columns")
     
-    logger.info("\n📝 Columns:")
+    logger.info("\nColumns:")
     for col in df.columns:
         dtype = df[col].dtype
         null_count = df[col].isnull().sum()
         logger.info(f"   - {col:25} {str(dtype):10} (nulls: {null_count})")
     
-    logger.info("\n📈 Numeric Features Summary:")
+    logger.info("\nNumeric Features Summary:")
     numeric_cols = df.select_dtypes(include=[np.number]).columns
     summary = df[numeric_cols].describe().round(4)
     print(summary)
     
-    logger.info(f"\n🚨 Anomalies: {df['is_anomaly'].sum()} / {len(df)} ({df['is_anomaly'].mean()*100:.2f}%)")
+    logger.info(f"\nAnomalies: {df['is_anomaly'].sum()} / {len(df)} ({df['is_anomaly'].mean()*100:.2f}%)")
     
-    logger.info("\n📅 Time Range:")
+    logger.info("\nTime Range:")
     if 'timestamp' in df.columns:
         logger.info(f"   Start: {df['timestamp'].min()}")
         logger.info(f"   End:   {df['timestamp'].max()}")
@@ -647,7 +647,7 @@ def main():
     """Main execution function for data ingestion pipeline."""
     
     logger.info("="*80)
-    logger.info("🌀 WINDGUARD AI - DATA INGESTION PIPELINE")
+    logger.info("WINDGUARD AI - DATA INGESTION PIPELINE")
     logger.info("="*80)
     logger.info("")
     
@@ -702,7 +702,7 @@ def main():
         return 0
         
     except Exception as e:
-        logger.error(f"\n❌ Data ingestion failed: {str(e)}")
+        logger.error(f"\nData ingestion failed: {str(e)}")
         import traceback
         logger.error(traceback.format_exc())
         return 1

@@ -149,10 +149,16 @@ def main():
     # 6. Generate and Save Local Explanation (Waterfall Plot)
     print(f"💧 Generating and saving SHAP waterfall plot for one prediction to {config.SHAP_WATERFALL_PATH}...")
     
+    # For GradientExplainer, we need to compute the base value differently
+    # Use the mean prediction on the background data as the base value
+    with torch.no_grad():
+        background_preds = model(background_data).cpu().numpy()
+        base_value = float(background_preds.mean())
+    
     # Create a SHAP explanation object for the first prediction
     explanation = shap.Explanation(
-        values=shap_values_avg_time[0],
-        base_values=explainer.expected_value.mean(), # Use mean of expected values
+        values=shap_values_avg_time[0, :, 0],  # First sample, all features, first output
+        base_values=base_value,
         data=test_samples_avg_time[0],
         feature_names=config.FEATURE_NAMES
     )
@@ -167,10 +173,11 @@ def main():
 
     # 7. Interpret Results
     # Get the most important feature globally
-    mean_abs_shap = np.mean(np.abs(shap_values_avg_time), axis=0)
+    # SHAP values are shape (samples, features, 1), so we need to squeeze the last dimension
+    mean_abs_shap = np.mean(np.abs(shap_values_avg_time.squeeze()), axis=0)
     most_important_feature_idx = np.argmax(mean_abs_shap)
     most_important_feature = config.FEATURE_NAMES[most_important_feature_idx]
-    importance_percentage = (mean_abs_shap[most_important_feature_idx] / np.sum(mean_abs_shap)) * 100
+    importance_percentage = float((mean_abs_shap[most_important_feature_idx] / np.sum(mean_abs_shap)) * 100)
 
     print("\n" + "="*80)
     print("💡 Interpretation")
