@@ -1,20 +1,35 @@
 {
   "version": 2,
-  "name": "windguard-ai",
   "builds": [
     {
       "src": "api/index.py",
       "use": "@vercel/python"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.py"
+      "source": "/",
+      "destination": "/windguard-frontend/production/windguard-dashboard.html"
     },
     {
-      "src": "/(.*)",
-      "dest": "/windguard-frontend/production/$1"
+      "source": "/api",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/windguard-dashboard.html",
+      "destination": "/windguard-frontend/production/windguard-dashboard.html"
+    },
+    {
+      "source": "/ar-guide.html",
+      "destination": "/windguard-frontend/production/ar-guide.html"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/windguard-frontend/production/:path*"
     }
   ]
 }
