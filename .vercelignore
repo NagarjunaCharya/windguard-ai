@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+windguard-env/
+
+# Data files
+data/
+*.csv
+*.pt
+*.pth
+*.npy
+
+# Model files (too large for Vercel)
+windguard-backend/bilstm_model.pth
+windguard-backend/test_data.csv
+
+# Logs
+logs/
+*.log
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Results
+results/
+__pycache__/
+
+# Scripts
+scripts/
+
+# Documentation
+*.md
+!README.md
+
+# Keep only production frontend
+windguard-frontend/src/
+windguard-frontend/tests/
+windguard-frontend/docs/
+windguard-frontend/node_modules/
+windguard-frontend/*.json
+windguard-frontend/*.js
+windguard-frontend/*.md
