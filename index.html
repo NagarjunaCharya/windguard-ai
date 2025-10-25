@@ -1,12 +1,52 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=./windguard-frontend/production/windguard-dashboard.html">
-    <title>Redirecting to WindGuard AI Dashboard...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0; url=/windguard-frontend/production/windguard-dashboard.html">
+    <title>WindGuard AI - Loading...</title>
+    <style>
+        body {
+            background: #111827;
+            color: #F3F4F6;
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .loader {
+            text-align: center;
+        }
+        .spinner {
+            border: 4px solid #374151;
+            border-top: 4px solid #3B82F6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        a {
+            color: #3B82F6;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <p>Redirecting to dashboard...</p>
-    <p>If not redirected, <a href="./windguard-frontend/production/windguard-dashboard.html">click here</a></p>
+    <div class="loader">
+        <div class="spinner"></div>
+        <h2>WindGuard AI Dashboard</h2>
+        <p>Loading dashboard...</p>
+        <p><a href="/windguard-frontend/production/windguard-dashboard.html">Click here if not redirected</a></p>
+    </div>
 </body>
 </html>

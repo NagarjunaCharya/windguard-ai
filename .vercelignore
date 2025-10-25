@@ -1,27 +1,34 @@
-# Python
+# Dependencies
+node_modules/
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
+*.pyc
 venv/
-ENV/
 windguard-env/
 
 # Data files
-data/
+data/raw/*
+data/processed/*
 *.csv
-*.pt
-*.pth
 *.npy
 
 # Model files (too large for Vercel)
-windguard-backend/bilstm_model.pth
-windguard-backend/test_data.csv
+data/models/*.pth
+*.pth
 
 # Logs
 logs/
 *.log
+
+# Backend (not needed for serverless)
+windguard-backend/
+backend/
+
+# Scripts
+scripts/
+
+# Documentation
+*.md
+!README.md
 
 # Git
 .git/
@@ -33,20 +40,7 @@ logs/
 
 # Results
 results/
-__pycache__/
 
-# Scripts
-scripts/
-
-# Documentation
-*.md
-!README.md
-
-# Keep only production frontend
-windguard-frontend/src/
-windguard-frontend/tests/
-windguard-frontend/docs/
-windguard-frontend/node_modules/
-windguard-frontend/*.json
-windguard-frontend/*.js
-windguard-frontend/*.md
+# Python files at root (use api/ instead)
+*.py
+!api/*.py
