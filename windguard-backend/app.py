@@ -19,10 +19,15 @@ CORS(app)  # Allow frontend on localhost
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"🔧 Using device: {device}")
 
+# Get absolute path to backend directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'bilstm_model.pth')
+DATA_PATH = os.path.join(BASE_DIR, 'test_data.csv')
+
 # Load model
 try:
     model = BiLSTMPredictor(input_size=4, hidden_size=64, num_layers=2).to(device)
-    model.load_state_dict(torch.load('bilstm_model.pth', map_location=device))
+    model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
     model.eval()
     print("✓ BiLSTM model loaded successfully (135,297 parameters)")
 except Exception as e:
@@ -31,16 +36,21 @@ except Exception as e:
 
 # Load test data
 try:
-    test_df = pd.read_csv('test_data.csv')
+    test_df = pd.read_csv(DATA_PATH)
     print(f"✓ Test data loaded: {test_df.shape[0]} records")
     # Normalize features for predictions (simple min-max scaling)
-    feature_cols = ['wind_speed', 'vibration', 'gearbox_temp', 'yaw_angle']
+    feature_cols = ['wind_speed', 'vibration', 'gearbox_temperature', 'yaw_position']
     if all(col in test_df.columns for col in feature_cols):
         test_df_normalized = test_df.copy()
         for col in feature_cols:
             min_val, max_val = test_df[col].min(), test_df[col].max()
             if max_val > min_val:
                 test_df_normalized[col] = (test_df[col] - min_val) / (max_val - min_val)
+        # Rename to match expected names for easier access
+        test_df_normalized = test_df_normalized.rename(columns={
+            'gearbox_temperature': 'gearbox_temp',
+            'yaw_position': 'yaw_angle'
+        })
     else:
         test_df_normalized = test_df
 except Exception as e:
@@ -62,8 +72,10 @@ def home():
         'endpoints': [
             '/api/turbines',
             '/api/predict/<turbine_id>',
+            '/api/simulate (POST)',
             '/api/shap',
             '/api/vendors/<issue>',
+            '/api/metrics',
             '/health'
         ]
     })
@@ -79,7 +91,7 @@ def get_turbines():
     turbines = [
         {
             'id': 1,
-            'name': 'Turbine #1',
+            'name': 'Wind Turbine WT-001',
             'status': 'Operational',
             'risk': 23,
             'output': 2.5,
@@ -88,7 +100,7 @@ def get_turbines():
         },
         {
             'id': 2,
-            'name': 'Turbine #2',
+            'name': 'Wind Turbine WT-002',
             'status': 'Warning',
             'risk': 65,
             'output': 2.1,
@@ -97,7 +109,7 @@ def get_turbines():
         },
         {
             'id': 3,
-            'name': 'Turbine #3',
+            'name': 'Wind Turbine WT-003',
             'status': 'Operational',
             'risk': 18,
             'output': 2.8,
@@ -106,7 +118,7 @@ def get_turbines():
         },
         {
             'id': 4,
-            'name': 'Turbine #4',
+            'name': 'Wind Turbine WT-004',
             'status': 'Operational',
             'risk': 32,
             'output': 2.6,
@@ -115,7 +127,7 @@ def get_turbines():
         },
         {
             'id': 5,
-            'name': 'Turbine #5',
+            'name': 'Wind Turbine WT-005',
             'status': 'Operational',
             'risk': 15,
             'output': 2.9,
@@ -146,7 +158,7 @@ def predict(turbine_id):
             # Fallback: generate realistic mock data
             np.random.seed(turbine_id)  # Consistent results per turbine
             seq_data = np.random.rand(72, 4).astype(np.float32)
-            # Make turbine #2 look more risky
+            # Make WT-002 look more risky
             if turbine_id == 2:
                 seq_data[:, 1] = np.clip(seq_data[:, 1] + 0.3, 0, 1)  # Higher vibration
                 seq_data[:, 2] = np.clip(seq_data[:, 2] + 0.4, 0, 1)  # Higher temperature
@@ -393,6 +405,131 @@ def get_metrics():
         }
     })
 
+@app.route('/api/simulate', methods=['POST'])
+def simulate():
+    """
+    Run simulation with custom parameter inputs
+    Request body: {wind_speed, vibration, gearbox_temperature, yaw_position} (normalized 0-1)
+    Returns: Risk prediction and analysis
+    """
+    if model is None:
+        return jsonify({'error': 'Model not loaded'}), 500
+
+    try:
+        # Parse request data
+        data = request.get_json()
+        wind_speed = float(data.get('wind_speed', 0.5))
+        vibration = float(data.get('vibration', 0.5))
+        gearbox_temp = float(data.get('gearbox_temperature', 0.5))
+        yaw_angle = float(data.get('yaw_position', 0.5))
+
+        # Create 72-timestep sequence with slight variations around input values
+        # This simulates realistic sensor data patterns
+        np.random.seed(42)
+        seq_data = np.zeros((72, 4), dtype=np.float32)
+        
+        # Add realistic temporal variations (±5% noise)
+        for i in range(72):
+            seq_data[i, 0] = np.clip(wind_speed + np.random.uniform(-0.05, 0.05), 0, 1)
+            seq_data[i, 1] = np.clip(vibration + np.random.uniform(-0.05, 0.05), 0, 1)
+            seq_data[i, 2] = np.clip(gearbox_temp + np.random.uniform(-0.03, 0.03), 0, 1)
+            seq_data[i, 3] = np.clip(yaw_angle + np.random.uniform(-0.02, 0.02), 0, 1)
+
+        # Convert to tensor
+        seq_tensor = torch.tensor(seq_data, dtype=torch.float32).unsqueeze(0).to(device)
+
+        # Run prediction
+        with torch.no_grad():
+            logit = model(seq_tensor)
+            risk_prob = torch.sigmoid(logit).item()
+
+        # Convert to percentage
+        risk_pct = risk_prob * 100
+
+        # Determine status and color
+        if risk_prob >= 0.75:
+            status = 'CRITICAL'
+            color = '#EF4444'
+        elif risk_prob >= 0.50:
+            status = 'WARNING'
+            color = '#F59E0B'
+        else:
+            status = 'OPERATIONAL'
+            color = '#10B981'
+
+        # SHAP feature importance (from Phase 2 analysis)
+        feature_importance = {
+            'gearbox_temp': 53.2,
+            'vibration': 30.8,
+            'wind_speed': 10.4,
+            'yaw_angle': 5.6
+        }
+
+        # Generate recommendations based on input parameters
+        recommendations = []
+        
+        # Check each parameter (denormalize for threshold checks)
+        gearbox_actual = gearbox_temp * 70 + 20  # Scale back to 20-90°C
+        if gearbox_actual > 70:
+            recommendations.append({
+                'icon': 'fa-temperature-high',
+                'text': f'Gearbox temperature is elevated ({gearbox_actual:.1f}°C). Schedule cooling system inspection.'
+            })
+        
+        if vibration > 0.7:
+            recommendations.append({
+                'icon': 'fa-wave-square',
+                'text': 'High vibration detected. Check for bearing wear or imbalance.'
+            })
+        
+        wind_actual = wind_speed * 25  # Scale to 0-25 m/s
+        if wind_actual > 20:
+            recommendations.append({
+                'icon': 'fa-wind',
+                'text': f'High wind conditions ({wind_actual:.1f} m/s). Monitor structural integrity closely.'
+            })
+        
+        if risk_prob < 0.3:
+            recommendations.append({
+                'icon': 'fa-check-circle',
+                'text': 'All parameters within normal range. Continue routine monitoring.'
+            })
+        
+        if risk_prob >= 0.5:
+            recommendations.append({
+                'icon': 'fa-exclamation-triangle',
+                'text': 'Elevated failure risk. Schedule preventive maintenance within 72 hours.'
+            })
+        
+        if len(recommendations) == 0:
+            recommendations.append({
+                'icon': 'fa-info-circle',
+                'text': 'Parameters within acceptable range. Monitor trends for early warning signs.'
+            })
+
+        # Model confidence (distance from decision boundary)
+        confidence = max(risk_prob, 1 - risk_prob) * 100
+
+        return jsonify({
+            'risk': round(risk_pct, 1),
+            'status': status,
+            'color': color,
+            'confidence': round(confidence, 1),
+            'feature_importance': feature_importance,
+            'recommendations': recommendations,
+            'input_parameters': {
+                'wind_speed': f"{wind_actual:.1f} m/s",
+                'vibration': f"{vibration:.2f}",
+                'gearbox_temp': f"{gearbox_actual:.1f}°C",
+                'yaw_angle': f"{yaw_angle * 360:.1f}°"
+            },
+            'timestamp': pd.Timestamp.now().isoformat()
+        })
+
+    except Exception as e:
+        print(f"Simulation error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint"""
@@ -412,4 +549,4 @@ if __name__ == '__main__':
     print("📖 API Docs: http://localhost:5000/")
     print("=" * 50 + "\n")
     
-    app.run(debug=True, port=5000, host='0.0.0.0')
+    app.run(debug=False, port=5000, host='0.0.0.0')
